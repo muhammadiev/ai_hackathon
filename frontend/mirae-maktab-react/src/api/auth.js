@@ -86,3 +86,11 @@ export function changePassword(oldPassword, newPassword) {
     })
   );
 }
+
+export function linkTelegram(code) {
+  return apiFetch('/accounts/me/telegram/link/', { method: 'POST', body: { code } });
+}
+
+export function unlinkTelegram() {
+  return apiFetch('/accounts/me/telegram/link/', { method: 'DELETE' });
+}
