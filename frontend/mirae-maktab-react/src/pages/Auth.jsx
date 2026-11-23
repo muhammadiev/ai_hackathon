@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { setAuthed, setOnboarded, formatUzPhone } from '../session.js';
 import { login as apiLogin } from '../api/auth.js';
+import { clearTokens, isMockMode } from '../api/client.js';
 import { useSubject } from '../SubjectContext.jsx';
 import '../login-page.css';
 
@@ -38,6 +39,12 @@ export function Login() {
       return;
     }
 
+    // Offline demo account (mock mode): works without a backend
+    if (isMockMode() && phone.replace(/\D/g, '') === '998902000009' && pw === 'mirae123') {
+      demoLogin();
+      return;
+    }
+
     setLoading(true);
     try {
       await apiLogin(phone, pw);
@@ -54,6 +61,13 @@ export function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const demoLogin = () => {
+    clearTokens();
+    setAuthed(true);
+    setOnboarded(true);
+    navigate('/', { replace: true });
   };
 
   const tgLogin = () => {
@@ -170,6 +184,15 @@ export function Login() {
               </button>
               {err ? <p className="lp-err">{err}</p> : <p className="lp-err" />}
             </form>
+
+            <button
+              type="button"
+              className="lp-submit"
+              onClick={demoLogin}
+              style={{ marginTop: '0.6em', background: 'transparent', color: '#3D7DF6', border: '1.5px solid #3D7DF6', boxShadow: 'none' }}
+            >
+              🚀 Demo versiyani ko&apos;rish
+            </button>
 
             <div className="lp-or">yoki</div>
             <div className="lp-social">
